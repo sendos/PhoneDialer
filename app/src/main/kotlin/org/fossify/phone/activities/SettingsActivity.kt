@@ -21,6 +21,7 @@ import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
+import org.fossify.phone.dialogs.RecordHoldNotificationDialog
 import org.fossify.phone.extensions.config
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.models.RecentCall
@@ -93,6 +94,7 @@ class SettingsActivity : SimpleActivity() {
         setupDisableProximitySensor()
         setupDisableSwipeToAnswer()
         setupAlwaysShowFullscreen()
+        setupRecordHoldNotification()
         setupCallsExport()
         setupCallsImport()
         updateTextColors(binding.settingsHolder)
@@ -336,6 +338,14 @@ class SettingsActivity : SimpleActivity() {
             settingsAlwaysShowFullscreenHolder.setOnClickListener {
                 settingsAlwaysShowFullscreen.toggle()
                 config.alwaysShowFullscreen = settingsAlwaysShowFullscreen.isChecked
+            }
+        }
+    }
+
+    private fun setupRecordHoldNotification() {
+        binding.settingsRecordHoldNotificationHolder.setOnClickListener {
+            RecordHoldNotificationDialog(this) {
+                // Dialog closed, nothing to do
             }
         }
     }

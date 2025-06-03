@@ -23,8 +23,10 @@ class CallNotificationManager(private val context: Context) {
     private val CALL_NOTIFICATION_ID = 42
     private val ACCEPT_CALL_CODE = 0
     private val DECLINE_CALL_CODE = 1
+    private val PLAY_NOTIFICATION_CODE = 2
     private val notificationManager = context.notificationManager
     private val callContactAvatarHelper = CallContactAvatarHelper(context)
+    private val audioNotificationHelper = AudioNotificationHelper(context)
 
     @SuppressLint("NewApi")
     fun setupNotification(forceLowPriority: Boolean = false) {
@@ -56,6 +58,11 @@ class CallNotificationManager(private val context: Context) {
             val declinePendingIntent =
                 PendingIntent.getBroadcast(context, DECLINE_CALL_CODE, declineCallIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
 
+            val playNotificationIntent = Intent(context, CallActionReceiver::class.java)
+            playNotificationIntent.action = PLAY_NOTIFICATION_AND_ACCEPT
+            val playNotificationPendingIntent =
+                PendingIntent.getBroadcast(context, PLAY_NOTIFICATION_CODE, playNotificationIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
+
             var callerName = if (callContact.name.isNotEmpty()) callContact.name else context.getString(R.string.unknown_caller)
             if (callContact.numberLabel.isNotEmpty()) {
                 callerName += " - ${callContact.numberLabel}"
@@ -69,13 +76,17 @@ class CallNotificationManager(private val context: Context) {
                 else -> R.string.ongoing_call
             }
 
+            val hasNotificationAudio = audioNotificationHelper.hasNotificationAudio()
+            
             val collapsedView = RemoteViews(context.packageName, R.layout.call_notification).apply {
                 setText(R.id.notification_caller_name, callerName)
                 setText(R.id.notification_call_status, context.getString(contentTextId))
                 setVisibleIf(R.id.notification_accept_call, callState == Call.STATE_RINGING)
+                setVisibleIf(R.id.notification_play_notification, callState == Call.STATE_RINGING && hasNotificationAudio)
 
                 setOnClickPendingIntent(R.id.notification_decline_call, declinePendingIntent)
                 setOnClickPendingIntent(R.id.notification_accept_call, acceptPendingIntent)
+                setOnClickPendingIntent(R.id.notification_play_notification, playNotificationPendingIntent)
 
                 if (callContactAvatar != null) {
                     setImageViewBitmap(R.id.notification_thumbnail, callContactAvatarHelper.getCircularBitmap(callContactAvatar))

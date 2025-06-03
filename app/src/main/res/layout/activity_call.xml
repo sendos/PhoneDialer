@@ -202,7 +202,7 @@
             android:id="@+id/call_toggle_microphone"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/circle_background"
+            android:background="@drawable/circle_button_background_ripple"
             android:contentDescription="@string/turn_microphone_off"
             android:padding="@dimen/activity_margin"
             android:src="@drawable/ic_microphone_off_vector"
@@ -213,7 +213,7 @@
             android:id="@+id/call_toggle_speaker"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/circle_background"
+            android:background="@drawable/circle_button_background_ripple"
             android:contentDescription="@string/turn_speaker_on"
             android:padding="@dimen/activity_margin"
             android:src="@drawable/ic_volume_up_vector"
@@ -234,7 +234,7 @@
             android:id="@+id/call_toggle_hold"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/circle_background"
+            android:background="@drawable/circle_button_background_ripple"
             android:contentDescription="@string/hold_call"
             android:padding="@dimen/activity_margin"
             android:src="@drawable/ic_pause_vector"
@@ -320,9 +320,24 @@
             android:padding="@dimen/medium_margin"
             android:src="@drawable/ic_call_end"
             app:layout_constraintBottom_toBottomOf="@+id/call_draggable"
-            app:layout_constraintEnd_toStartOf="@+id/call_draggable"
+            app:layout_constraintEnd_toStartOf="@+id/call_play_notification"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/call_draggable"
+            app:layout_constraintVertical_bias="0.85" />
+
+        <ImageView
+            android:id="@+id/call_play_notification"
+            android:layout_width="@dimen/incoming_call_button_size"
+            android:layout_height="@dimen/incoming_call_button_size"
+            android:background="@drawable/circle_button_background_ripple"
+            android:clickable="true"
+            android:contentDescription="@string/play_notification_and_accept"
+            android:padding="@dimen/medium_margin"
+            android:src="@drawable/ic_play_notification_vector"
+            app:layout_constraintBottom_toBottomOf="@+id/call_draggable"
+            app:layout_constraintEnd_toStartOf="@+id/call_draggable"
+            app:layout_constraintStart_toEndOf="@+id/call_decline"
             app:layout_constraintTop_toTopOf="@+id/call_draggable"
             app:layout_constraintVertical_bias="0.85" />
 
@@ -336,6 +351,17 @@
             app:layout_constraintEnd_toEndOf="@+id/call_decline"
             app:layout_constraintStart_toStartOf="@+id/call_decline"
             app:layout_constraintTop_toBottomOf="@+id/call_decline" />
+
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/call_play_notification_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:text="@string/play_notification"
+            android:textSize="@dimen/bigger_text_size"
+            app:layout_constraintEnd_toEndOf="@+id/call_play_notification"
+            app:layout_constraintStart_toStartOf="@+id/call_play_notification"
+            app:layout_constraintTop_toBottomOf="@+id/call_play_notification" />
 
         <ImageView
             android:id="@+id/call_left_arrow"

@@ -64,6 +64,7 @@ class CallActivity : SimpleActivity() {
     private var dialpadHeight = 0f
 
     private var audioRouteChooserDialog: DynamicBottomSheetChooserDialog? = null
+    private var audioNotificationHelper: AudioNotificationHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,7 @@ class CallActivity : SimpleActivity() {
         }
 
         updateTextColors(binding.callHolder)
+        audioNotificationHelper = AudioNotificationHelper(this)
         initButtons()
         audioManager.mode = AudioManager.MODE_IN_CALL
         addLockScreenFlags()
@@ -105,6 +107,9 @@ class CallActivity : SimpleActivity() {
         if (screenOnWakeLock?.isHeld == true) {
             screenOnWakeLock!!.release()
         }
+
+        audioNotificationHelper?.release()
+        audioNotificationHelper = null
     }
 
     override fun onBackPressed() {
@@ -135,8 +140,17 @@ class CallActivity : SimpleActivity() {
             callAccept.setOnClickListener {
                 acceptCall()
             }
+
+            // Show play notification button only if there's a recording available
+            callPlayNotification.beVisibleIf(audioNotificationHelper?.hasNotificationAudio() == true)
         } else {
             handleSwipe()
+            // Also show play notification button when swipe is enabled, if recording is available
+            callPlayNotification.beVisibleIf(audioNotificationHelper?.hasNotificationAudio() == true)
+        }
+
+        callPlayNotification.setOnClickListener {
+            playNotificationAndAccept()
         }
 
         callToggleMicrophone.setOnClickListener {
@@ -718,6 +732,16 @@ class CallActivity : SimpleActivity() {
 
     private fun acceptCall() {
         CallManager.accept()
+    }
+
+    private fun playNotificationAndAccept() {
+        // First accept the call
+        CallManager.accept()
+        
+        // Then play the notification audio
+        audioNotificationHelper?.playNotificationAudio {
+            // Audio playback completed or failed, nothing more to do
+        }
     }
 
     private fun initOutgoingCallUI() {
